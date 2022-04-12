@@ -1,0 +1,14 @@
+{
+  "name": "2022-04-12-touch-heatmap",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "esbuild src/main.ts --bundle --sourcemap --servedir=www --outdir=www"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "esbuild": "^0.14.36"
+  }
+}
