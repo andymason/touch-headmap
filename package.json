@@ -1,13 +1,13 @@
 {
-  "name": "2022-04-12-touch-heatmap",
+  "name": "touch-heatmap",
   "version": "1.0.0",
-  "description": "",
+  "description": "Exploring touch visualization on screens",
   "main": "index.js",
   "scripts": {
     "dev": "esbuild src/main.ts --bundle --sourcemap --servedir=www --outdir=www"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "andrew@coderonfire.com",
+  "license": "MIT",
   "dependencies": {
     "esbuild": "^0.14.36"
   }

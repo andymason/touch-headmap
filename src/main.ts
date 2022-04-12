@@ -5,6 +5,33 @@ function getViewportDimensions(): { width: number; height: number } {
   };
 }
 
+function updateSurroundingArea(
+  x: number,
+  y: number,
+  radius: number,
+  data: Uint8ClampedArray
+): void {
+  for (let row = 0; row < radius; row++) {
+    // Skip any rows that go beyond the grid boundary
+    if (row + y > height) continue;
+
+    for (let col = 0; col < radius; col++) {
+      // Skip any rows that go beyond the grid boundary
+      if (col + x > width) continue;
+
+      const xIntensity = 0.5 - Math.abs(col / radius - 0.5);
+      const yIntensity = 0.5 - Math.abs(row / radius - 0.5);
+      const intensity = xIntensity + yIntensity;
+
+      const rgbIndex = (y + col) * width * 4 + (x + row) * 4;
+      // data[rgbIndex] = 255 * intensity;
+      // data[rgbIndex + 1] = 255 * intensity;
+      // data[rgbIndex + 2] = 255 * intensity;
+      data[rgbIndex + 3] = 255 * intensity;
+    }
+  }
+}
+
 function handlePointerMovement(
   event: MouseEvent,
   ctx: CanvasRenderingContext2D,
@@ -19,11 +46,13 @@ function handlePointerMovement(
   const gridIndex = row * width + col;
   grid[gridIndex] = grid[gridIndex] + 1;
 
-  const rgbIndex = row * width * 4 + col * 4;
-  imageData.data[rgbIndex] = grid[gridIndex];
-  imageData.data[rgbIndex + 1] = grid[gridIndex];
-  imageData.data[rgbIndex + 2] = grid[gridIndex];
-  imageData.data[rgbIndex + 3] = 255;
+  // const rgbIndex = row * width * 4 + col * 4;
+  // imageData.data[rgbIndex] = grid[gridIndex];
+  // imageData.data[rgbIndex + 1] = grid[gridIndex];
+  // imageData.data[rgbIndex + 2] = grid[gridIndex];
+  // imageData.data[rgbIndex + 3] = 255;
+
+  updateSurroundingArea(x, y, 30, imageData.data);
 
   ctx.putImageData(imageData, 0, 0);
 }
