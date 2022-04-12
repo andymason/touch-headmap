@@ -24,10 +24,12 @@ function updateSurroundingArea(
       const intensity = xIntensity + yIntensity;
 
       const rgbIndex = (y + col) * width * 4 + (x + row) * 4;
-      // data[rgbIndex] = 255 * intensity;
-      // data[rgbIndex + 1] = 255 * intensity;
-      // data[rgbIndex + 2] = 255 * intensity;
-      data[rgbIndex + 3] = 255 * intensity;
+
+      const rgbVal = Math.min(data[rgbIndex] + 10 * intensity, 255);
+      data[rgbIndex] = rgbVal;
+      data[rgbIndex + 1] = rgbVal;
+      data[rgbIndex + 2] = rgbVal;
+      data[rgbIndex + 3] = 255;
     }
   }
 }
@@ -38,7 +40,9 @@ function handlePointerMovement(
   grid: number[],
   imageData: ImageData
 ): void {
-  const { x, y } = event;
+  const { pageX, pageY } = event;
+  const x = pageX;
+  const y = pageY;
   const row = Math.floor(y);
   const col = Math.floor(x);
 
@@ -46,20 +50,20 @@ function handlePointerMovement(
   const gridIndex = row * width + col;
   grid[gridIndex] = grid[gridIndex] + 1;
 
-  // const rgbIndex = row * width * 4 + col * 4;
-  // imageData.data[rgbIndex] = grid[gridIndex];
-  // imageData.data[rgbIndex + 1] = grid[gridIndex];
-  // imageData.data[rgbIndex + 2] = grid[gridIndex];
-  // imageData.data[rgbIndex + 3] = 255;
-
   updateSurroundingArea(x, y, 30, imageData.data);
-
   ctx.putImageData(imageData, 0, 0);
 }
 
 const { width, height } = getViewportDimensions();
 
 function main(): void {
+  // Add pointer listener for movement
+  // Record pointer coordinates on movement
+
+  // Create an array for each pixel on screen
+  // Set each pixel to 0
+  // Increase pixel value by one based on pointer coordinates
+
   const grid: number[] = Array(width * height);
   grid.fill(0);
 
@@ -74,18 +78,20 @@ function main(): void {
     throw new Error("Unable to get 3D canvas context");
   }
 
-  const imageData: ImageData = ctx.createImageData(width, height);
+  ctx.fillStyle = "#000";
+  ctx.fillRect(0, 0, width, height);
+  const imageData: ImageData = ctx.getImageData(0, 0, width, height);
 
-  window.addEventListener("mousemove", (ev) =>
-    handlePointerMovement(ev, ctx, grid, imageData)
-  );
+  canvasEl.onpointerdown = (e) => {
+    canvasEl.onpointermove = (e) =>
+      handlePointerMovement(e, ctx, grid, imageData);
+    canvasEl.setPointerCapture(e.pointerId);
+  };
 
-  // Add pointer listener for movement
-  // Record pointer coordinates on movement
-
-  // Create an array for each pixel on screen
-  // Set each pixel to 0
-  // Increase pixel value by one based on pointer coordinates
+  canvasEl.onpointerup = (e) => {
+    canvasEl.onpointermove = null;
+    canvasEl.releasePointerCapture(e.pointerId);
+  };
 }
 
 main();
